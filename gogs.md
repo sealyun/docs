@@ -8,3 +8,5 @@ docker run -d --name my-go-git-server --publish 8022:22 --publish 3000:3000 --vo
 浏览器访问3000端口
 
 然后，就没有然后了
+
+## TODO持续集成钩子设置
