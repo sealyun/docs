@@ -45,5 +45,28 @@ $ service docker restart
 ```
 
 ## 创建项目
+![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/harbor-project.png)
+
+![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/harbor-open.png)是否公开点成【是】，否则swarm节点没有权限拉取会导致错误
+
+登陆仓库(输入用户名密码)：
+```
+$ docker login reg.iflytek.com
+```
+
+将本地一个ubuntu:12.04镜像上传到harbor的develop项目下：
+```
+$ docker tag ubuntu:12.04 reg.iflytekc.com/develop/ubuntu:12.04
+$ docker push reg.iflytekc.com/develop/ubuntu:12.04
+```
 
 ## 设置同步
+
+增加策略：
+
+![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/admin-sync.png)
+![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/add-sync.png)
+
+设置使用上面配置好的策略:
+
+![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/project-sync.png)
