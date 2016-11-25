@@ -54,15 +54,78 @@ merge o<------------------------|
       V                         V
 ```
 > admin创建项目
+
 ![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/add-repo-0.png)
 ![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/add-repo-1.png)
 ![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/add-repo-2.png)
 > developer fork该项目
+
 开发者登陆开发都是gogs账号，从admin仓库里fork一份出来进行开发：
 
+![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/developer-login.png)
+
+点击派生按钮：
+
+![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/fork.png)
+![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/fork-1.png)
+
 > developer tag触发构建alpha版本镜像
+
+开发者clone派生出来的项目：
+```
+fanuxdeMacBook-Air:repo-de fanux$ git clone http://192.168.86.92:3000/fanux/repo
+Cloning into 'repo'...
+remote: Counting objects: 3, done.
+remote: Total 3 (delta 0), reused 0 (delta 0)
+Unpacking objects: 100% (3/3), done.
+Checking connectivity... done.
+```
+
+添加代码，打tag并提交：
+```
+fanuxdeMacBook-Air:repo fanux$ touch Dockerfile
+fanuxdeMacBook-Air:repo fanux$ echo "FROM centos:7" >>Dockerfile
+fanuxdeMacBook-Air:repo fanux$ git add .
+fanuxdeMacBook-Air:repo fanux$ git commit -m "add docker file"
+[master 03fd680] add docker file
+ 1 file changed, 1 insertion(+)
+ create mode 100644 Dockerfile
+fanuxdeMacBook-Air:repo fanux$ git tag alpha-v0.1.0
+fanuxdeMacBook-Air:repo fanux$ git push
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (2/2), done.
+Writing objects: 100% (3/3), 287 bytes | 0 bytes/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To http://192.168.86.92:3000/fanux/repo
+   aa7bc47..03fd680  master -> master
+fanuxdeMacBook-Air:repo fanux$ git push origin --tags        # 这个动作会触发drone自动构建docker镜像并提交到镜像仓库
+Total 0 (delta 0), reused 0 (delta 0)
+To http://192.168.86.92:3000/fanux/repo
+ * [new tag]         alpha-v0.1.0 -> alpha-v0.1.0
+```
+如此就能看到tag了：
+
+![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/show-tags.png)
+
 > developer pull request
-> 测试人员tag触发构建beta版本镜像
-> 测试人员tag触发构建release版本镜像
+
+开发者点击绿色按钮，创建pull request,请求合并 
+
+![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/pull-request-0.png)
+
+点击创建合并请求:
+
+![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/pull-request-1.png)
+
+管理员主仓库就能看到合并请求了：
+
+![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/merge-1.png)
+
+管理员点击合并请求：
+
+![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/merge-2.png)
+
+合并时可触发构建。 测试人员打tag与develop打tag过程相同,测试人员打beta版本的tag，测试ok了，打release版本的tag。打tag过程同样自动触发构建。
 
 ## 开发环境->测试/准上线环境->线上环境
