@@ -60,7 +60,7 @@ merge o<------------------------|
 ![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/add-repo-2.png)
 > developer fork该项目
 
-开发者登陆开发都是gogs账号，从admin仓库里fork一份出来进行开发：
+开发者登陆开发者的gogs账号，从admin仓库里fork一份出来进行开发：
 
 ![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/developer-login.png)
 
@@ -128,4 +128,4 @@ To http://192.168.86.92:3000/fanux/repo
 
 合并时可触发构建。 测试人员打tag与develop打tag过程相同,测试人员打beta版本的tag，测试ok了，打release版本的tag。打tag过程同样自动触发构建。
 
-## 开发环境->测试/准上线环境->线上环境
+## TODO开发环境->测试/准上线环境->线上环境
