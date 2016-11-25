@@ -54,7 +54,12 @@ merge o<------------------------|
       V                         V
 ```
 > admin创建项目
+![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/add-repo-0.png)
+![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/add-repo-1.png)
+![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/add-repo-2.png)
 > developer fork该项目
+开发者登陆开发都是gogs账号，从admin仓库里fork一份出来进行开发：
+
 > developer tag触发构建alpha版本镜像
 > developer pull request
 > 测试人员tag触发构建beta版本镜像
