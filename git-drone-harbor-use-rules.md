@@ -26,6 +26,24 @@
 * swarm manager收到创建容器的指令，选择执行改容器合适的节点，并将执行指令发送给对应节点的docker engine
 * 特定节点的docker engine发现节点上没有对应容器的镜像，自动去harbor镜像仓库拉取，并启动容器
 
+## git push 触发构建
+
+drone 默认每次push会触发构建docker镜像，要想push的时候不去构建镜像，在commit和message里加入 “[CI SKIP]”即可，如下：
+
+```
+fanuxdeMacBook-Air:hello-world fanux$ git commit -m "[CI SKIP] not CI"
+[master 0e3fa3f] [CI SKIP] not CI
+ 1 file changed, 1 insertion(+)
+fanuxdeMacBook-Air:hello-world fanux$ git push
+Counting objects: 3, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (3/3), 353 bytes | 0 bytes/s, done.
+Total 3 (delta 1), reused 0 (delta 0)
+To http://localhost:3000/fanux/hello-world.git
+   f279f0d..0e3fa3f  master -> master
+```
+
 ## git仓库使用
 本着简单并满足以下需求的原则：
 
