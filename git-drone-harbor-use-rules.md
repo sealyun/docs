@@ -7,7 +7,7 @@
  | git     |---->| drone  |-------->| harbor   |                           |
  +---------+     +--------+         +----------+                           V
      ^                                   |                         +----------------+
-     |                       +-----------|----------+              |     shipyard   |    
+     |                       +-----------|----------+              |     dface      |    
   developer                  |           |          |              +----------------+ 
                              V           V          V                       |         
                          +------+   +--------+  +-------+          +-----------------+
@@ -28,7 +28,7 @@
 
 ## git push 触发构建
 
-drone 默认每次push会触发构建docker镜像，要想push的时候不去构建镜像，在commit和message里加入 “[CI SKIP]”即可，如下：
+drone 默认每次push会触发构建docker镜像，要想push的时候不去构建镜像，在commit的rmessage里加入 “[CI SKIP]”即可，如下：
 
 ```
 fanuxdeMacBook-Air:hello-world fanux$ git commit -m "[CI SKIP] not CI"
@@ -49,8 +49,10 @@ To http://localhost:3000/fanux/hello-world.git
 
 需求：
 
-* 每次使用git打tag时触发自动构建docker镜像过程 
+* 每次使用git push操作时触发自动构建docker镜像过程 
+* 如只push不想构建 如上，commit 时加`[CI SKIP]`参数
 * 开发人员没有修改主仓库的权限，只有通过pull request的方式然后主仓库管理员merge到主仓库中
+* 测试人员不操作代码仓库,只操作镜像仓库
 
 ```
     admin                    developer
@@ -144,6 +146,52 @@ To http://192.168.86.92:3000/fanux/repo
 
 ![](http://192.168.86.170:10080/iflytek/docs/raw/master/images/merge-2.png)
 
-合并时可触发构建。 测试人员打tag与develop打tag过程相同,测试人员打beta版本的tag，测试ok了，打release版本的tag。打tag过程同样自动触发构建。
+## TODOharbor仓库使用
 
-## TODO开发环境->测试/准上线环境->线上环境
+## 开发环境->测试->准上线环境/线上环境
+* 仅开发环境有持续集成的组建
+* 测试和线上环境只有镜像仓库和swarm等组建
+* 三个环境仓库主机名相同，都为reg.iflytek.com
+
+方案1：
+```
+  +-------+       +--------------+      
+  | drone |------>| dev registry |----+      
+  +-------+       +--------------+    | docker pull reg.iflytek.com/dev/hello-world:alpha-v1.0  
+                                      | docker tag reg.iflytek.com/dev/hello-world:alpha-v1.0  reg.iflytek.com/test/hello-world:alpha-v1.0  
+                                      | docker save reg.iflytek.com/test/hello-world:alpha-v1.0 > hello-world.tar
+                                      | scp ...
+                                      | docker load -i hello-world.tar
+                                      | docker push reg.iflytek.com/test/hello-world:alpha-v1.0  
+                  +---------------+ <-+ 
+                  | test registry | 
+                  +---------------+ --+   
+                                      | docker pull reg.iflytek.com/test/hello-world:alpha-v1.0  
+                                      | docker tag reg.iflytek.com/test/hello-world:alpha-v1.0  reg.iflytek.com/release/hello-world:alpha-v1.0  
+                                      | docker save reg.iflytek.com/release/hello-world:alpha-v1.0 > hello-world.tar
+                                      | scp ...
+                                      | docker load -i hello-world.tar
+                                      | docker push reg.iflytek.com/release/hello-world:alpha-v1.0  
+               +------------------+   |
+               | release registry |<--+
+               +------------------+
+```
+
+方案2（镜像仓库同步）:
+* 环境网络相通
+```
+             +-------+       +--------------+
+             | drone |------>| dev registry | dev.reg.iflytek.com ----- dev
+             +-------+       +--------------+                       |__ test
+                                    | sync dev project
+                                    V
+                             +---------------+ ---+ docker pull dev.reg.iflytek.com/dev/hello-world:alpha-v1.0
+      test.reg.iflytek.com   | test registry |    | docker tag dev.reg.iflytek.com/dev/hello-world:alpha-v1.0 test.teg.iflytek.com/test/hello-world:alpha-v1.0
+              |____dev       +---------------+ <--+ docker push test.teg.iflytek.com/test/hello-world:alpha-v1.0
+              |____test             | sync  test project
+              |____rel              V
+                             +------------------+ ---+ docker pull test.teg.iflytek.com/test/hello-world:alpha-v1.0
+       rel.reg.iflytek.com   | release registry |    | docker tag test.teg.iflytek.com/test/hello-world:alpha-v1.0 rel.teg.iflytek.com/rel/hello-world:alpha-v1.0
+              |____test      +------------------+ <--+ docker push rel.teg.iflytek.com/rel/hello-world:alpha-v1.0
+              |____rel
+```
