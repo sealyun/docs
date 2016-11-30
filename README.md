@@ -3,3 +3,4 @@
 * [docker-compose 容器编排](http://192.168.86.170:10080/iflytek/docs/src/master/compose.md)
 * [harbor 镜像仓库文档](http://192.168.86.170:10080/iflytek/docs/src/master/harbor.md)
 * [gogs 私有git仓库搭建](http://192.168.86.170:10080/iflytek/docs/src/master/gogs.md)
+* [drone 持续集成使用](http://192.168.86.170:10080/iflytek/docs/src/master/drone.md)
