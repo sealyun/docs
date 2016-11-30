@@ -4,3 +4,4 @@
 * [harbor 镜像仓库文档](http://192.168.86.170:10080/iflytek/docs/src/master/harbor.md)
 * [gogs 私有git仓库搭建](http://192.168.86.170:10080/iflytek/docs/src/master/gogs.md)
 * [drone 持续集成使用](http://192.168.86.170:10080/iflytek/docs/src/master/drone.md)
+* [CI/CD 使用准则](http://192.168.86.170:10080/iflytek/docs/src/master/git-drone-harbor-use-rules.md)
