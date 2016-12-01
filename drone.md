@@ -70,3 +70,23 @@ CMD ./hello-world
 这意味着可以把构建的结果分离到一个更小的镜像里去发布。
 
 如构建时基础镜像需要jdk  maven等, 而发布仅需要一个jre的基础镜像。
+
+## 容器中保留代码commit等信息
+```
+build:
+   image: 192.168.86.106/develop/golang:latest
+   commands:
+      - go build -o hello-world
+      - echo "LABEL commit=$$COMMIT branch=$$BRANCH build_number=$$BUILD_NUMBER" >> Dockerfile
+
+publish:
+   docker:
+      username: admin
+      password: Harbor12345
+      registry: 192.168.86.106
+      email: fhtjob@hotmail.com
+      repo: develop/hello-world
+      tag: release-v4.0
+      file: Dockerfile
+      insecure: true
+```
