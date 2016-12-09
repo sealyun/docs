@@ -30,6 +30,7 @@ services:
            - /data/iat/data:/root/data
            - /data/iat/conf/zkr.cfg:/root/sivs_run/bin/zkr.cfg
         network_mode: "host"
+        restart: "on-failure:10"
 ```
 配置文件可读性非常强，基本一眼就知道每个字段含义了
 
