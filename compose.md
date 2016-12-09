@@ -36,9 +36,15 @@ services:
 
 执行`docker-compose -f docker-compose.yml up -d` 等同于：
 ```
-$ docker run -d --name iat -l key=value --device /dev/nvidia0:/dev/nvidia0 --privileged  -e constraint:hostname==yjybj-2-010 \
-      -v /data/iat/resource:/root/resource -v /data/iat/data:/root/data -v /data/iat/conf/zkr.cfg:/root/sivs_run/bin/zkr.cfg \
-      --net=host reg.iflytek.com/release/iat:0.9.4 sh run_iatserver.sh
+$ docker run -d --name iat \
+             -l key=value \
+             --device /dev/nvidia0:/dev/nvidia0 \
+             --privileged  \
+             -e constraint:hostname==yjybj-2-010 \
+             -v /data/iat/resource:/root/resource \
+             -v /data/iat/data:/root/data \
+             -v /data/iat/conf/zkr.cfg:/root/sivs_run/bin/zkr.cfg \
+             --net=host reg.iflytek.com/release/iat:0.9.4 sh run_iatserver.sh
 ```
 
 `docker-compose stop|restart|down` 停止重启删除容器
