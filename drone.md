@@ -90,3 +90,35 @@ publish:
       file: Dockerfile
       insecure: true
 ```
+
+## build 容器与工作容器的关系
+看一个例子：
+```
+build:
+   image: 192.168.86.106/devops/golang:1.7-godep
+   commands:
+     - mkdir -p $GOPATH/src/github.com/docker/swarm/ && cp -r ./* $GOPATH/src/github.com/docker/swarm/ && pwd
+     - cd $GOPATH/src/github.com/docker/swarm/ && godep go build -o cattle && cd - && cp $GOPATH/src/github.com/docker/swarm/cattle .
+
+publish:
+   docker:
+      username: admin
+      password: Harbor12345
+      registry: 192.168.86.106
+      email: fhtjob@hotmail.com
+      repo: devops/cattle
+      tag: alpha-v1.0
+      file: Dockerfile
+      insecure: true
+```
+
+```
+FROM 192.168.86.106/devops/alpine:3.4
+COPY cattle /bin
+CMD cattle --help
+```
+我们使用`golang:1.7-godep` 构建二进制程序，使用`alpine:3.4`发布二进制程序, 这样发布的镜像就可以非常小。
+
+代码是在构建镜像外部被拉下来的，然后与构建镜像共享磁盘。  commands都是在容器内部执行的。
+
+我们使用pwd可以看一下工作目录是什么：`/drone/src/192.168.37.5/fanux/cattle`， 这就是工作目录。所以我们在别的目录构建时需要把结果拷贝到这个文件。然后发布的Dockerfile才可以直接拷贝编译的结果。
