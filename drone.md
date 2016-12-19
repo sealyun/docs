@@ -122,3 +122,39 @@ CMD cattle --help
 代码是在构建镜像外部被拉下来的，然后与构建镜像共享磁盘。  commands都是在容器内部执行的。
 
 我们使用pwd可以看一下工作目录是什么：`/drone/src/192.168.37.5/fanux/cattle`， 这就是工作目录。所以我们在别的目录构建时需要把结果拷贝到这个文件。然后发布的Dockerfile才可以直接拷贝编译的结果。
+
+## cattle drone使用事例
+
+### 构建镜像与发布镜像
+```
+192.168.86.106/devops/golang   1.7-godep               # 构建镜像，包含包构建工具等构建依赖组建, 较大 
+192.168.86.106/devops/golang   1.7-alpine              # 发布镜像, 仅仅包含运行服务依赖的东西，较小
+```
+
+### .drone.yml 文件
+```yaml
+build:
+   image: 192.168.86.106/devops/golang:1.7-godep
+   commands:
+     - echo "LABEL commit=$$COMMIT branch=$$BRANCH build_number=$$BUILD_NUMBER" >> Dockerfile
+     - mkdir -p $GOPATH/src/github.com/docker/swarm/ && cp -r ./* $GOPATH/src/github.com/docker/swarm/ && pwd
+     - cd $GOPATH/src/github.com/docker/swarm/ && godep go build -o cattle && cd - && cp $GOPATH/src/github.com/docker/swarm/cattle .
+
+publish:
+   docker:
+      username: admin
+      password: Harbor12345
+      registry: 192.168.86.106
+      email: fhtjob@hotmail.com
+      repo: devops/cattle
+      tag: alpha-v1.4
+      file: Dockerfile
+      insecure: true
+```
+
+### Dockerfile
+```
+FROM 192.168.86.106/devops/golang:1.7-alpine
+COPY cattle $GOPATH/bin
+CMD cattle --help
+```
