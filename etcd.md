@@ -42,3 +42,29 @@ member a0e7ca9ea6dcc3a2 is healthy: got healthy result from http://172.16.162.4:
 cluster is healthy
 ```
 最后，最好运行单数个节点
+
+compose文件事例：
+```
+version: '2'
+services:
+    etcd_0_20:
+       container_name: etcd_0_20
+       network_mode: "host"
+       environment:
+           - ETCD_NAME=infra5 
+           - ETCD_INITIAL_CLUSTER=infra2=http://172.27.3.31:2380,infra1=http://172.27.3.30:2380,infra3=http://172.27.0.14:2380,infra5=http://172.27.0.20:2380,infra0=http://172.27.0.13:2380,infra4=http://172.27.4.14:2380
+           - ETCD_INITIAL_CLUSTER_STATE=existing 
+           - "constraint:hostname==yjybj-0-020"
+       volumes:
+           - /data/etcd-data.etcd:/etcd-data.etcd
+       image: reg.iflytek.com/release/etcd:2.3.1 
+       command: |
+             etcd --listen-client-urls http://172.27.0.20:2379 
+                  --advertise-client-urls http://172.27.0.20:2379 
+                  --listen-peer-urls http://172.27.0.20:2380 
+                  --initial-advertise-peer-urls http://172.27.0.20:2380 --data-dir /etcd-data.etcd
+
+```
+```
+$  docker-compose -H tcp://swarm.iflytek.com:4000 -f docker-compose-etcd-4-11.yml up -d
+```
