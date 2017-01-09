@@ -193,10 +193,13 @@ $ docker run -p 8082:80 --name=back2 backend:latest go run main.go back2
 ```
 连续请求traefik:
 ```
-╰─➤  curl -H Host:whoami.docker.localhost http://127.0.0.1
-Hello, ["/tmp/go-build147686239/command-line-arguments/_obj/exe/main" "back2"]%                                                                                            ╰─➤  curl -H Host:whoami.docker.localhost http://127.0.0.1
-Hello, ["/tmp/go-build355301072/command-line-arguments/_obj/exe/main" "back1"]%                                                                                             ╰─➤  curl -H Host:whoami.docker.localhost http://127.0.0.1
-Hello, ["/tmp/go-build147686239/command-line-arguments/_obj/exe/main" "back2"]%                                                                                              ╰─➤  curl -H Host:whoami.docker.localhost http://127.0.0.1
+curl -H Host:whoami.docker.localhost http://127.0.0.1
+Hello, ["/tmp/go-build147686239/command-line-arguments/_obj/exe/main" "back2"]%   
+curl -H Host:whoami.docker.localhost http://127.0.0.1
+Hello, ["/tmp/go-build355301072/command-line-arguments/_obj/exe/main" "back1"]% 
+curl -H Host:whoami.docker.localhost http://127.0.0.1
+Hello, ["/tmp/go-build147686239/command-line-arguments/_obj/exe/main" "back2"]%
+curl -H Host:whoami.docker.localhost http://127.0.0.1
 Hello, ["/tmp/go-build355301072/command-line-arguments/_obj/exe/main" "back1"]%
 ```
 可以看到两个backend轮流处理请求，实现负载均衡
