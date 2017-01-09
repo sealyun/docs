@@ -161,3 +161,56 @@ X-Forwarded-Server: dee2f0aa1f85
 2. 下线时正在处理的请求会不会失败。
 3. 性能如何（与nginx对比）。
 
+### 一个backend下线时，正在处理的请求会不会失败
+实验思路：启动两个backend，traefik代理时会轮流发给两个backend，当客户端请求之后，关闭掉正在处理请求的backend容器。看结果
+
+启动一个http服务，假设某个任务需要处理20秒
+```
+main() {
+    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+        time.Sleep(time.Second * 20)
+        fmt.Fprintf(w, "Hello, %q", os.Args)
+    })
+
+    log.Fatal(http.ListenAndServe(":80", nil))
+}
+```
+打包成容器：
+```
+FROM golang:latest
+COPY main.go .
+LABEL traefik.backend=whoami
+LABEL traefik.frontend.rule=Host:whoami.docker.localhost
+CMD go run main.go
+```
+```
+docker build -t backend:latest .
+```
+分别运行两个backend：
+```
+$ docker run -p 8082:80 --name=back1 backend:latest go run main.go back1
+$ docker run -p 8082:80 --name=back2 backend:latest go run main.go back2
+```
+连续请求traefik:
+```
+╰─➤  curl -H Host:whoami.docker.localhost http://127.0.0.1
+Hello, ["/tmp/go-build147686239/command-line-arguments/_obj/exe/main" "back2"]%                                                                                            ╰─➤  curl -H Host:whoami.docker.localhost http://127.0.0.1
+Hello, ["/tmp/go-build355301072/command-line-arguments/_obj/exe/main" "back1"]%                                                                                             ╰─➤  curl -H Host:whoami.docker.localhost http://127.0.0.1
+Hello, ["/tmp/go-build147686239/command-line-arguments/_obj/exe/main" "back2"]%                                                                                              ╰─➤  curl -H Host:whoami.docker.localhost http://127.0.0.1
+Hello, ["/tmp/go-build355301072/command-line-arguments/_obj/exe/main" "back1"]%
+```
+可以看到两个backend轮流处理请求，实现负载均衡
+
+现在向traefik请求一次，这次请求肯定是back2处理的，然后20秒之内关闭back2容器。
+```
+╰─➤  curl -H Host:whoami.docker.localhost http://127.0.0.1
+```
+关闭back2容器：
+```
+$ docker stop back2
+```
+返回bad gateway了：
+```
+Bad Gateway
+```
+结论：就目前看来，停止掉backend正在处理的请求会失败，traefik不会重新发送给别的backend处理
