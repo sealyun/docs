@@ -69,20 +69,3 @@ services:
 $  docker-compose -H tcp://swarm.iflytek.com:4000 -f docker-compose-etcd-4-11.yml up -d
 ```
 
-```
-version: '2'
-services:
-    sis-auth:
-      command: sh watchdog.sh 172.27 172.27.0.13:2379/v2/keys 172.27.0.13:2379,172.27.3.30:2379,172.27.3.31:2379 online
-      environment:
-         - "constraint:hostname==yjybj-[04]-0(16|17|18|21|22|23)"
-         - "affinity:app!=sis-auth"
-         - TZ=Asia/Shanghai
-      labels:
-         - "app=sis-auth"
-      network_mode: "host"
-      volumes:
-         - /data/sis/logs/sis-auth:/opt/server/logs
-         - /etc/localtime:/etc/localtime
-      image: reg.iflytek.com/release/sis-auth:0.9.1
-```

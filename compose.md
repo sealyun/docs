@@ -81,5 +81,22 @@ $ docker-compose scale service_iat=9   # 运行9个iat
 
 所以我们使用非亲和性来保障这一点，先给容器贴标签：`app=nodemanager` 然后告诉集群不要把我运行在有`app=nodemanager`这个标签的容器的节点上：`affinity:app!=nodemanager`
 
+```
+version: '2'
+services:
+    sis-auth:
+      command: sh watchdog.sh 172.27 172.27.0.13:2379/v2/keys 172.27.0.13:2379,172.27.3.30:2379,172.27.3.31:2379 online
+      environment:
+         - "constraint:hostname==yjybj-[04]-0(16|17|18|21|22|23)"
+         - "affinity:app!=sis-auth"
+         - TZ=Asia/Shanghai
+      labels:
+         - "app=sis-auth"
+      network_mode: "host"
+      volumes:
+         - /data/sis/logs/sis-auth:/opt/server/logs
+         - /etc/localtime:/etc/localtime
+      image: reg.iflytek.com/release/sis-auth:0.9.1
+```
 
 更多资料请看官网：https://docs.docker.com/compose/overview/
