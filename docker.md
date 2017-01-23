@@ -43,6 +43,22 @@ $ docker run --link=mysql nginx:latest
 ```
 这样nginx可以通过容器名去访问mysql，其原理是在nginx容器中的/etc/hosts中加入了mysql主机名解析。这种共享不可跨主机
 
+```
+$ docker run --rm -it --name c1 centos:latest /bin/bash
+```
+```
+$ docker run --rm -it --name c2 --link c1  centos:latest /bin/bash
+[root@178d290d873c /]# cat /etc/hosts
+127.0.0.1    localhost
+::1    localhost ip6-localhost ip6-loopback
+fe00::0    ip6-localnet
+ff00::0    ip6-mcastprefix
+ff02::1    ip6-allnodes
+ff02::2    ip6-allrouters
+172.17.0.4    c1 3b7b15fa7e20   # 看这里
+172.17.0.5    178d290d873c
+```
+
 4. none模式
 容器不创建网络，需要自行定义
 
