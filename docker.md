@@ -36,18 +36,22 @@ $ docker run --net=host nginx:latest
 ```
 这种容器没有自己的网络，完全共享主机的网络，所以可以通过主机ip直接访问容器服务。 坏处是容器与其它容器端口冲突
 
-3. 共享容器网络
+3. link网络
 ```
 $ docker run --name mysql mysql:latest
 $ docker run --link=mysql nginx:latest
 ```
-这种nginx共享了mysql容器的网络，可以通过默认的hostname去访问mysql服务。这种共享不可跨主机
+这样nginx可以通过容器名去访问mysql，其原理是在nginx容器中的/etc/hosts中加入了mysql主机名解析。这种共享不可跨主机
 
 4. none模式
 容器不创建网络，需要自行定义
 
 5. overlay网络
 进群中常用的网络模式，使用vxlan等技术作了一层覆盖，使每个容器有自己独立的ip并可跨主机通信。
+
+6. 共享容器网络
+
+如kubernetes里pod的实现，pod是多个容器的集合，这些容器都共享了同一个容器的网络，那么这些容器就如同在一个host上一样。
 
 ## 磁盘挂载
 使用容器有一点需要注意，就是容器的生命周期可能很短，所以不要在容器中持久化数据。  比如，升级时使用新的镜像那么之前老版本的容器肯定会被删除。
