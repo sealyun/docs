@@ -158,9 +158,3 @@ FROM 192.168.86.106/devops/golang:1.7-alpine
 COPY cattle $GOPATH/bin
 CMD cattle --help
 ```
-
-## 主意事项
-安装时使用ip地址，用主机名可能会出问题，因为容器内没有对应主机名的解析
-
-初次提交时需要添加—status,否则构建会一直处于pending状态。git commit -m "add status" —status
-
