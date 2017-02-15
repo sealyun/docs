@@ -2,6 +2,12 @@
 * 镜像(image) - 一堆文件和目录的集合，如centos镜像里面有/usr /lib /bin等目录。可类比成操作系统镜像。
 * 容器(container) - 用过虚拟机的都知道如一个centos虚拟机镜像可以创建多个虚拟机，容器就可类比成虚拟机。很多资料上说容器是“运行着的镜像”其实不确切，容易产生误导，因为容器可以停止，停止了的容器就和关机的虚拟机一样也是存在的。
 
+```
+[root@docker rootfs]# pwd
+/var/lib/docker/devicemapper/mnt/4c179e5d58d5f0fd5181618c3a7f0a87f47473bbfffdd18e515c74a40caf2be1/rootfs
+[root@docker rootfs]# ls
+bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+```
 
 ## 常用命令
 ![状态图](http://192.168.86.170:10080/iflytek/docs/raw/master/images/status.png)
