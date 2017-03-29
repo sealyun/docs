@@ -58,13 +58,16 @@ pipeline:
          - go build -o hello-drone
 
     publish:
-          image: plugins/docker
-          username: fanux #镜像仓库用户名
-          password: f975494768 #镜像仓库密码
+          image: plugins/docker #插件镜像，无需修改
+          registry: 10.1.86.51  #镜像仓库地址
+          username: admin #镜像仓库用户名
+          password: Harbor12345 #镜像仓库密码
           email: fhtjob@hotmail.com 
-          repo: fanux/hello #项目/镜像名 
-          tag: latest #镜像tag
+          repo: test/hello #项目/镜像名 
+          #tag: latest #镜像tag
+          tag: ${DRONE_TAG} #获取git tag的参数
           file: Dockerfile #交付时的Dockerfile,将构建完的目标文件（如bin文件，字节码）打包成新的镜像
+          insecure: true
 ```
 
 ## Dockerfile
